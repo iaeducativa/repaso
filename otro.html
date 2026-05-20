@@ -1,0 +1,854 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reinventando el Aula: Pedagogía en la Era de la IA</title>
+  <style>
+    /* ==========================================================================
+       VARIABLES Y RESET
+       ========================================================================== */
+    :root {
+      --primario: #07344c;       /* Azul muy oscuro, institucional */
+      --secundario: #07496a;     /* Azul medio */
+      --acento: #d96724;         /* Naranja académico */
+      --acento-hover: #b8551a;
+      --destaque: #13b9c7;       /* Celeste vibrante */
+      --fondo: #f4f7f8;
+      --blanco: #ffffff;
+      --texto: #2d3748;
+      --texto-claro: #5b6570;
+      --sombra-suave: 0 4px 15px rgba(7, 52, 76, 0.08);
+      --sombra-fuerte: 0 15px 35px rgba(7, 52, 76, 0.15);
+      --radio: 12px;
+      --transicion: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: var(--texto);
+      background-color: var(--fondo);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    
+    /* Tipografía */
+    h1, h2, h3, h4 { color: var(--primario); line-height: 1.2; font-weight: 700; }
+    p { margin-bottom: 1rem; }
+    strong { color: var(--primario); }
+
+    /* ==========================================================================
+       MENÚ SUPERIOR (NAVBAR) PEGAJOSO
+       ========================================================================== */
+    header {
+      position: fixed;
+      top: 0; left: 0; width: 100%;
+      background-color: var(--blanco);
+      box-shadow: var(--sombra-suave);
+      z-index: 1000;
+      transition: var(--transicion);
+      border-bottom: 3px solid var(--destaque);
+    }
+    
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primario);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-decoration: none;
+    }
+    .logo span { color: var(--acento); }
+
+    /* Menú Desktop */
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--texto-claro);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: var(--transicion);
+      padding: 0.5rem 0;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0%; height: 2px;
+      background-color: var(--acento);
+      transition: var(--transicion);
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--primario); }
+    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+    /* Menú Mobile Toggle */
+    .menu-toggle {
+      display: none;
+      background: none; border: none;
+      font-size: 1.5rem; color: var(--primario);
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       ESTRUCTURA GENERAL Y ANIMACIONES
+       ========================================================================== */
+    section { padding: 7rem 2rem 5rem; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    
+    .titulo-seccion {
+      text-align: center;
+      margin-bottom: 4rem;
+      max-width: 800px;
+      margin-inline: auto;
+    }
+    .titulo-seccion span.etiqueta {
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      background: rgba(19, 185, 199, 0.1);
+      color: var(--secundario);
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+    }
+    .titulo-seccion h2 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+    .titulo-seccion p { font-size: 1.15rem; color: var(--texto-claro); }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Botones */
+    .btn {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background-color: var(--acento);
+      color: var(--blanco);
+      text-decoration: none;
+      font-weight: 700;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: var(--transicion);
+      font-size: 1rem;
+      box-shadow: 0 4px 10px rgba(217, 103, 36, 0.3);
+    }
+    .btn:hover { background-color: var(--acento-hover); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(217, 103, 36, 0.4); }
+    .btn-secundario {
+      background-color: transparent;
+      color: var(--secundario);
+      border: 2px solid var(--secundario);
+      box-shadow: none;
+    }
+    .btn-secundario:hover { background-color: rgba(7, 73, 106, 0.05); transform: translateY(-2px); }
+
+    /* ==========================================================================
+       SECCIÓN: HERO
+       ========================================================================== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, var(--blanco) 0%, #e8f4f8 100%);
+      padding-top: 100px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    .hero-texto h1 {
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      margin-bottom: 1.5rem;
+    }
+    .hero-texto h1 span { color: var(--destaque); }
+    .hero-texto p {
+      font-size: 1.25rem;
+      color: var(--texto-claro);
+      margin-bottom: 2.5rem;
+      max-width: 90%;
+    }
+    .hero-acciones { display: flex; gap: 1rem; flex-wrap: wrap; }
+    
+    .hero-imagen img {
+      width: 100%;
+      border-radius: var(--radio);
+      box-shadow: var(--sombra-fuerte);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    /* ==========================================================================
+       SECCIÓN: LA INCOMODIDAD (TARJETAS)
+       ========================================================================== */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+    .tarjeta {
+      background: var(--blanco);
+      padding: 2.5rem;
+      border-radius: var(--radio);
+      box-shadow: var(--sombra-suave);
+      border-top: 5px solid var(--secundario);
+      cursor: pointer;
+      transition: var(--transicion);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .tarjeta:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--sombra-fuerte);
+    }
+    .tarjeta[data-id="miedo"] { border-top-color: #d32f2f; }
+    .tarjeta[data-id="bronca"] { border-top-color: var(--acento); }
+    .tarjeta[data-id="curiosidad"] { border-top-color: var(--destaque); }
+    
+    .tarjeta-header { display: flex; align-items: center; gap: 15px; margin-bottom: 1.5rem; }
+    .tarjeta-icono { font-size: 2.5rem; }
+    .tarjeta h3 { font-size: 1.5rem; }
+    .tarjeta p { color: var(--texto-claro); flex-grow: 1; }
+    .tarjeta-link {
+      margin-top: 1.5rem;
+      color: var(--secundario);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .tarjeta:hover .tarjeta-link { color: var(--acento); gap: 10px; }
+
+    /* ==========================================================================
+       SECCIÓN: ARQUITECTURA (TIMELINE)
+       ========================================================================== */
+    .timeline { position: relative; max-width: 900px; margin: 0 auto; }
+    .timeline::before {
+      content: ''; position: absolute; left: 50%; transform: translateX(-50%);
+      width: 4px; height: 100%; background: rgba(7, 73, 106, 0.1); border-radius: 4px;
+    }
+    .timeline-item {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 4rem; position: relative; width: 100%;
+    }
+    .timeline-item:nth-child(even) { flex-direction: row-reverse; }
+    
+    .timeline-contenido {
+      width: 45%; background: var(--blanco); padding: 2.5rem;
+      border-radius: var(--radio); box-shadow: var(--sombra-suave);
+      cursor: pointer; transition: var(--transicion); border: 1px solid rgba(0,0,0,0.03);
+    }
+    .timeline-contenido:hover { transform: scale(1.03); box-shadow: var(--sombra-fuerte); border-color: var(--destaque); }
+    
+    .timeline-punto {
+      position: absolute; left: 50%; transform: translate(-50%, -50%); top: 50%;
+      width: 45px; height: 45px; background: var(--primario);
+      border: 6px solid var(--fondo); border-radius: 50%; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--blanco); font-weight: bold; font-size: 1.2rem;
+    }
+    .timeline-item:nth-child(2) .timeline-punto { background: var(--acento); }
+    .timeline-item:nth-child(3) .timeline-punto { background: var(--destaque); }
+    
+    .timeline-contenido h3 { margin-bottom: 10px; font-size: 1.3rem; }
+    .timeline-contenido p { font-size: 0.95rem; color: var(--texto-claro); margin-bottom: 15px; }
+    .timeline-link { font-size: 0.85rem; font-weight: 600; color: var(--acento); }
+
+    /* ==========================================================================
+       SECCIÓN: MITO VS REALIDAD
+       ========================================================================== */
+    .comparativa-caja {
+      display: grid; grid-template-columns: 1fr 1fr;
+      background: var(--blanco); border-radius: var(--radio);
+      box-shadow: var(--sombra-fuerte); overflow: hidden;
+    }
+    .col-mito, .col-realidad { padding: 4rem 3rem; }
+    .col-mito { background-color: #fff5f5; }
+    .col-realidad { background-color: #f0fbfa; }
+    
+    .comp-header { border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 1rem; margin-bottom: 2rem; }
+    .col-mito .comp-header h3 { color: #d32f2f; }
+    .col-realidad .comp-header h3 { color: #00796b; }
+    
+    .lista-comp { list-style: none; }
+    .lista-comp li { margin-bottom: 2rem; }
+    .lista-comp h4 { font-size: 1.2rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 10px; }
+    .col-mito .lista-comp h4::before { content: "✕"; color: #d32f2f; }
+    .col-realidad .lista-comp h4::before { content: "✓"; color: #00796b; }
+    .lista-comp p { font-size: 0.95rem; color: var(--texto-claro); padding-left: 25px; }
+
+    /* ==========================================================================
+       VENTANAS EMERGENTES (MODALES) - DISEÑO DENSO Y ACADÉMICO
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(7, 52, 76, 0.85); backdrop-filter: blur(5px);
+      z-index: 9999; opacity: 0; visibility: hidden; transition: var(--transicion);
+      display: flex; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.activo { opacity: 1; visibility: visible; }
+    
+    .modal-contenedor {
+      background: var(--blanco);
+      width: 100%; max-width: 900px; max-height: 90vh;
+      border-radius: var(--radio); overflow-y: auto;
+      transform: translateY(20px) scale(0.98); transition: var(--transicion);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      display: flex; flex-direction: column;
+    }
+    .modal-overlay.activo .modal-contenedor { transform: translateY(0) scale(1); }
+    
+    .modal-header {
+      padding: 2.5rem 3rem 1.5rem;
+      background: var(--primario); color: var(--blanco);
+      position: relative;
+    }
+    .modal-cerrar {
+      position: absolute; top: 20px; right: 20px;
+      background: rgba(255,255,255,0.1); border: none;
+      width: 40px; height: 40px; border-radius: 50%; color: var(--blanco);
+      font-size: 1.5rem; cursor: pointer; transition: var(--transicion);
+    }
+    .modal-cerrar:hover { background: var(--acento); transform: rotate(90deg); }
+    
+    .modal-header h2 { color: var(--blanco); font-size: 2rem; margin-top: 10px; }
+    .modal-etiqueta {
+      display: inline-block; padding: 4px 12px; background: rgba(255,255,255,0.2);
+      border-radius: 4px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;
+    }
+    
+    .modal-body { padding: 3rem; color: var(--texto); font-size: 1.1rem; line-height: 1.8; }
+    .modal-body h4 { color: var(--secundario); font-size: 1.4rem; margin: 2rem 0 1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+    .modal-body p { margin-bottom: 1.5rem; }
+    
+    /* Cajas de ejemplos en los modales para "Riqueza Visual y Conceptual" */
+    .caja-ejemplo {
+      background: #f8fafc;
+      border-left: 5px solid var(--destaque);
+      padding: 2rem; margin: 2rem 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .caja-ejemplo h5 { color: var(--primario); font-size: 1.1rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .caja-ejemplo blockquote {
+      font-style: italic; color: var(--texto-claro);
+      border-left: 3px solid var(--acento); padding-left: 1rem; margin-top: 1rem;
+    }
+    .modal-imagen {
+      width: 100%; max-height: 400px; object-fit: cover;
+      border-radius: 8px; margin: 2rem 0; box-shadow: var(--sombra-suave);
+    }
+
+    /* ==========================================================================
+       FOOTER
+       ========================================================================== */
+    footer {
+      background: var(--primario); color: var(--blanco);
+      text-align: center; padding: 4rem 2rem; margin-top: 4rem;
+    }
+    footer h3 { color: var(--blanco); margin-bottom: 1rem; }
+    footer p { color: rgba(255,255,255,0.7); }
+
+    /* ==========================================================================
+       RESPONSIVE (MÓVIL Y TABLET)
+       ========================================================================== */
+    @media (max-width: 992px) {
+      .hero-grid { grid-template-columns: 1fr; text-align: center; }
+      .hero-texto p { margin: 0 auto 2.5rem; }
+      .hero-acciones { justify-content: center; }
+      
+      .timeline::before { left: 30px; }
+      .timeline-item, .timeline-item:nth-child(even) { flex-direction: column; align-items: flex-end; }
+      .timeline-punto { left: 30px; }
+      .timeline-contenido { width: calc(100% - 80px); }
+      
+      .comparativa-caja { grid-template-columns: 1fr; }
+    }
+    
+    @media (max-width: 768px) {
+      .nav-links {
+        position: absolute; top: 100%; left: 0; width: 100%;
+        background: var(--blanco); flex-direction: column; gap: 0;
+        box-shadow: var(--sombra-fuerte); display: none;
+      }
+      .nav-links.activo { display: flex; }
+      .nav-links a { padding: 1.5rem 2rem; border-bottom: 1px solid #eee; display: block; }
+      .menu-toggle { display: block; }
+      
+      section { padding: 5rem 1rem 3rem; }
+      .modal-body { padding: 1.5rem; }
+      .modal-header { padding: 1.5rem; }
+      .col-mito, .col-realidad { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= NAV ================= -->
+  <header id="navbar">
+    <nav class="nav-container">
+      <a href="#" class="logo">Educa<span>IA</span></a>
+      <button class="menu-toggle" id="menuBtn">☰</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#inicio" class="active">Inicio</a></li>
+        <li><a href="#paradigmas">Los Paradigmas</a></li>
+        <li><a href="#arquitectura">Arquitectura del Aula</a></li>
+        <li><a href="#alfabetizacion">Mito vs Realidad</a></li>
+        <li><a href="#humanizacion" class="abrir-modal" data-id="humanizacion">Humanizar la IA</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ================= HERO ================= -->
+  <section id="inicio" class="hero">
+    <div class="container hero-grid">
+      <div class="hero-texto reveal">
+        <h1>Reinventar el aula en la <span>Era de la IA</span></h1>
+        <p>De la incomodidad pedagógica al compromiso humano. La verdadera transformación no es integrar una herramienta tecnológica, sino rediseñar nuestra evaluación y el contrato didáctico.</p>
+        <div class="hero-acciones">
+          <a href="#paradigmas" class="btn">Explorar los Paradigmas</a>
+          <button class="btn btn-secundario abrir-modal" data-id="introduccion">Ver Síntesis Teórica</button>
+        </div>
+      </div>
+      <div class="hero-imagen reveal" style="transition-delay: 0.2s;">
+        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=1000" alt="">
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LOS PARADIGMAS (LA INCOMODIDAD) ================= -->
+  <section id="paradigmas" class="container">
+    <div class="titulo-seccion reveal">
+      <span class="etiqueta">Reacciones Iniciales</span>
+      <h2>La Incomodidad Pedagógica</h2>
+      <p>Cuando un estudiante entrega un trabajo perfecto generado en segundos, nuestras certezas evaluativas colapsan. Identificar nuestra reacción es el primer paso metodológico.</p>
+    </div>
+
+    <div class="grid-3">
+      <div class="tarjeta abrir-modal reveal" data-id="miedo">
+        <div class="tarjeta-header">
+          <span class="tarjeta-icono">🚧</span>
+          <h3>El Miedo</h3>
+        </div>
+        <p>La postura defensiva: obsesión por el plagio, prohibición institucional y la falsa promesa de los detectores algorítmicos.</p>
+        <span class="tarjeta-link">Desarrollar concepto ➔</span>
+      </div>
+
+      <div class="tarjeta abrir-modal reveal" data-id="bronca" style="transition-delay: 0.1s;">
+        <div class="tarjeta-header">
+          <span class="tarjeta-icono">⚖️</span>
+          <h3>La Bronca</h3>
+        </div>
+        <p>La postura reactiva: frustración por la elusión del esfuerzo cognitivo. Si la máquina piensa, ¿cómo desarrolla el estudiante su pensamiento crítico?</p>
+        <span class="tarjeta-link">Desarrollar concepto ➔</span>
+      </div>
+
+      <div class="tarjeta abrir-modal reveal" data-id="curiosidad" style="transition-delay: 0.2s;">
+        <div class="tarjeta-header">
+          <span class="tarjeta-icono">💡</span>
+          <h3>La Curiosidad</h3>
+        </div>
+        <p>La postura reflexiva: aceptar la disrupción como una oportunidad histórica para pasar de evaluar el "producto" a evaluar el "proceso".</p>
+        <span class="tarjeta-link">Desarrollar concepto ➔</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ARQUITECTURA PEDAGÓGICA ================= -->
+  <section id="arquitectura" style="background-color: var(--blanco);">
+    <div class="container">
+      <div class="titulo-seccion reveal">
+        <span class="etiqueta">Rediseño Metodológico</span>
+        <h2>Arquitectura Pedagógica de la IA</h2>
+        <p>El aula debe transicionar. El estudiante deja de ser un "redactor de textos" para convertirse en un "editor crítico y auditor algorítmico".</p>
+      </div>
+
+      <div class="timeline">
+        <!-- Paso 1 -->
+        <div class="timeline-item reveal">
+          <div class="timeline-punto">1</div>
+          <div class="timeline-contenido abrir-modal" data-id="prompting">
+            <h3>El Diseño del Prompt (La Consigna)</h3>
+            <p>Escribir un buen prompt no es "hablarle a la compu". Requiere estructurar el pensamiento, definir el rol, dar contexto y establecer restricciones. Saber preguntar demuestra dominio del tema.</p>
+            <span class="timeline-link">Ver ejemplos de prompts académicos ➔</span>
+          </div>
+        </div>
+        <!-- Paso 2 -->
+        <div class="timeline-item reveal">
+          <div class="timeline-punto">2</div>
+          <div class="timeline-contenido abrir-modal" data-id="friccion">
+            <h3>Iteración y Fricción Crítica</h3>
+            <p>La primera respuesta de la IA nunca debe ser la final. El aprendizaje ocurre cuando el estudiante se ve obligado a "discutir" con el algoritmo, corregir sus sesgos o pedirle mayor profundidad.</p>
+            <span class="timeline-link">Ver metodología de auditoría ➔</span>
+          </div>
+        </div>
+        <!-- Paso 3 -->
+        <div class="timeline-item reveal">
+          <div class="timeline-punto">3</div>
+          <div class="timeline-contenido abrir-modal" data-id="metacognicion">
+            <h3>Reflexión Metacognitiva</h3>
+            <p>La entrega final cambia: el estudiante entrega el texto, el historial de chat completo, y un párrafo justificando *por qué* aceptó o rechazó las sugerencias de la IA.</p>
+            <span class="timeline-link">Ver rúbrica de evaluación ➔</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MITO VS REALIDAD ================= -->
+  <section id="alfabetizacion" class="container">
+    <div class="titulo-seccion reveal">
+      <span class="etiqueta">Alfabetización Algorítmica</span>
+      <h2>Desmitificando la Caja Negra</h2>
+      <p>Para integrar la IA críticamente, docentes y alumnos deben comprender su naturaleza. No es una entidad consciente que "sabe"; es estadística predictiva hiper-sofisticada.</p>
+    </div>
+
+    <div class="comparativa-caja reveal">
+      <!-- Mito -->
+      <div class="col-mito">
+        <div class="comp-header">
+          <h3>La Creencia (El Mito)</h3>
+        </div>
+        <ul class="lista-comp">
+          <li>
+            <h4>Comprensión Semántica</h4>
+            <p>La ilusión de que la máquina "entiende" el significado de los textos de sociología, matemáticas o historia que está redactando.</p>
+          </li>
+          <li>
+            <h4>Neutralidad y Objetividad</h4>
+            <p>Asumir que las respuestas están libres de ideología, sesgo cultural o visión de mundo, viéndola como un "oráculo" infalible.</p>
+          </li>
+          <li>
+            <h4>Delegación Total</h4>
+            <p>Confiar ciegamente en las fuentes, citas y datos duros provistos por el chat sin necesidad de validación externa.</p>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Realidad -->
+      <div class="col-realidad">
+        <div class="comp-header">
+          <h3>La Realidad Técnica</h3>
+        </div>
+        <ul class="lista-comp">
+          <li>
+            <h4>Loros Estocásticos (Probabilidad)</h4>
+            <p>Es un Modelo de Lenguaje Grande (LLM). Simplemente calcula matemáticamente cuál es la palabra más probable que sigue a la anterior.</p>
+          </li>
+          <li>
+            <h4>Sesgos de Entrenamiento</h4>
+            <p>Reproduce los sesgos de género, raza y geografía presentes en los billones de textos de internet con los que fue entrenada.</p>
+          </li>
+          <li>
+            <h4>Alucinaciones Algorítmicas</h4>
+            <p>Genera información falsa con estructura perfecta y tono de autoridad. Prioriza lo "verosímil" (que parezca real) sobre lo "veraz" (que sea verdad).</p>
+          </li>
+        </ul>
+        <button class="btn btn-secundario abrir-modal" data-id="alucinacion" style="margin-top:1rem; width:100%;">Ver Caso Real de Alucinación</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    <div class="container">
+      <h3>Universidad & Innovación Educativa</h3>
+      <p>Núcleos conceptuales sobre Arquitectura Pedagógica, IA y el factor humano en la enseñanza.</p>
+      <p style="margin-top: 2rem; font-size: 0.85rem; opacity: 0.6;">"La educación no se trata de automatizar respuestas, sino de humanizar las preguntas."</p>
+    </div>
+  </footer>
+
+  <!-- ================= MODAL GLOBAL (CONTENEDOR) ================= -->
+  <div class="modal-overlay" id="modalGlobal">
+    <div class="modal-contenedor">
+      <div class="modal-header">
+        <button class="modal-cerrar" id="btnCerrarModal">&times;</button>
+        <span class="modal-etiqueta" id="modalEtiqueta">Categoría</span>
+        <h2 id="modalTitulo">Título del Modal</h2>
+      </div>
+      <div class="modal-body" id="modalCuerpo">
+        <!-- El contenido se inyecta dinámicamente vía JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SCRIPTS ================= -->
+  <script>
+    /* --------------------------------------------------------------------------
+       BASE DE DATOS CONCEPTUAL (RICH CONTENT PARA MODALES)
+       Aquí reside la densidad teórica solicitada.
+       -------------------------------------------------------------------------- */
+    const baseDatos = {
+      introduccion: {
+        etiqueta: "Síntesis Teórica",
+        titulo: "El Cambio de Paradigma Educativo",
+        contenido: `
+          <p>La introducción de modelos fundacionales (como ChatGPT o Claude) en el ámbito académico representa una disrupción comparable a la invención de la calculadora científica, pero aplicada al lenguaje y al razonamiento estructurado.</p>
+          <h4>Del Producto al Proceso Cognitivo</h4>
+          <p>Durante décadas, el sistema educativo se ha basado en evaluar el <strong>producto final</strong> (un ensayo entregado, un código escrito, una monografía). La IA ha comoditizado este producto: hoy, generar un texto perfecto tiene un costo cognitivo y temporal cercano a cero.</p>
+          <img src="https://images.unsplash.com/photo-1456406644174-8ddd4cd52a06?auto=format&fit=crop&w=800&q=80" alt="" class="modal-imagen">
+          <p>El núcleo conceptual de la nueva arquitectura pedagógica exige que la evaluación se desplace hacia el <strong>proceso</strong>. Ya no podemos evaluar solo "qué" dice el texto, sino que debemos evaluar <em>cómo el estudiante dialogó, iteró, corrigió y curó</em> la información junto a la máquina.</p>
+        `
+      },
+      humanizacion: {
+        etiqueta: "Desarrollo Fundamental",
+        titulo: "Humanizando la Pedagogía ante la IA",
+        contenido: `
+          <p>Frente al avance de la automatización cognitiva, <strong>humanizar la educación</strong> significa volver a poner en el centro las habilidades que los algoritmos no pueden replicar: la empatía, el juicio ético, la contextualización cultural y el pensamiento crítico profundo.</p>
+          <h4>El Rol Intransferible del Docente</h4>
+          <p>Un Modelo de Lenguaje puede explicar la fotosíntesis en 50 estilos diferentes. Pero la máquina carece de "cuerpo" y "contexto". La IA <strong>no puede leer la frustración</strong> en el rostro de un alumno, no puede inspirar a través del testimonio vital, y no puede comprender la realidad socioeconómica que atraviesa el estudiante.</p>
+          <div class="caja-ejemplo">
+            <h5>La Taxonomía de Bloom Actualizada</h5>
+            <p>Las bases de la pirámide cognitiva (Recordar y Comprender) han sido resueltas por la IA. El humano debe habitar la cima:</p>
+            <ul>
+              <li><strong>Evaluar:</strong> Juzgar la calidad, el sesgo y la veracidad de lo generado.</li>
+              <li><strong>Crear (con sentido):</strong> Ensamblar piezas de información para resolver problemas reales del entorno social del estudiante.</li>
+            </ul>
+          </div>
+          <p>La respuesta a la Inteligencia Artificial no es volverse más maquinales (con software de vigilancia), sino volvernos <em>radicalmente más humanos</em>.</p>
+        `
+      },
+      miedo: {
+        etiqueta: "Reacción Defensiva",
+        titulo: "La Obsesión por el Plagio y la Vigilancia",
+        contenido: `
+          <p>La primera reacción institucional ante la IA generativa suele ser el pánico. El instinto es prohibir su uso y adquirir herramientas de "detección algorítmica" (como Turnitin IA) para mantener el status quo de la evaluación tradicional.</p>
+          <h4>El Fracaso de los Detectores de IA</h4>
+          <p>La literatura científica actual es concluyente: <strong>los detectores de texto generado por IA no son fiables</strong>. Funcionan midiendo la "perplejidad" (predictibilidad) del texto.</p>
+          <div class="caja-ejemplo">
+            <h5>El Riesgo del Falso Positivo</h5>
+            <p>Se ha documentado un sesgo grave: los detectores marcan frecuentemente como "IA" los textos escritos por estudiantes no nativos (que usan gramática más predecible) o estudiantes neurodivergentes.</p>
+            <blockquote>"Acusar a un estudiante de plagio basándose en una herramienta probabilística (un detector) destruye el contrato de confianza pedagógica."</blockquote>
+          </div>
+          <p>Intentar resolver un problema tecnológico (la IA que escribe) con más tecnología policial (la IA que detecta) es una carrera armamentista inútil. La solución es pedagógica.</p>
+        `
+      },
+      bronca: {
+        etiqueta: "Reacción Reactiva",
+        titulo: "La Crisis del Esfuerzo Cognitivo",
+        contenido: `
+          <p>La "bronca" docente nace de un lugar éticamente válido: sabemos que el cerebro necesita <strong>fricción y esfuerzo</strong> para crear nuevas conexiones neuronales (aprender). Si un estudiante resume un texto de 100 páginas en 3 segundos usando IA, se está privando del proceso de atención profunda.</p>
+          <h4>Rediseñando la Fricción</h4>
+          <p>Si la tarea tradicional ya no genera esfuerzo, debemos rediseñar la consigna para devolverle la carga cognitiva al alumno, pero en un nivel superior.</p>
+          <div class="caja-ejemplo">
+            <h5>Ejemplo Práctico de Rediseño</h5>
+            <p><strong>Antes:</strong> <em>"Escriba un ensayo describiendo las causas de la Primera Guerra Mundial."</em> (Riesgo alto de delegación total).</p>
+            <p><strong>Ahora:</strong> <em>"Pídale a ChatGPT que genere un ensayo sobre las causas de la PGM desde la perspectiva de Alemania. Luego, escriba usted un análisis crítico señalando 3 factores históricos que la IA omitió u ocultó en su relato."</em></p>
+          </div>
+          <p>En el segundo escenario, el alumno no puede simplemente copiar. Está forzado a aplicar el pensamiento crítico (evaluar) sobre el texto base.</p>
+        `
+      },
+      curiosidad: {
+        etiqueta: "Reacción Reflexiva",
+        titulo: "Aceptar la Disrupción y el Aula Invertida",
+        contenido: `
+          <p>La <strong>incomodidad pedagógica</strong> es el motor de la innovación. Al adoptar la curiosidad, el docente deja de pelear contra la herramienta y comienza a preguntarse cómo altera la naturaleza misma del conocimiento en su disciplina.</p>
+          <h4>El Aula Invertida Potenciada (Flipped AI Classroom)</h4>
+          <p>La IA asume el rol de "tutor socrático" o de "simulador de escenarios" fuera del horario de clases, liberando el tiempo presencial para el debate humano.</p>
+          <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80" alt="" class="modal-imagen">
+          <div class="caja-ejemplo">
+            <h5>Dinámica de Juego de Roles (Roleplay)</h5>
+            <p>En una clase de Psicología o Medicina, el alumno configura la IA con un prompt: <em>"Actúa como un paciente de 45 años que presenta síntomas de ansiedad generalizada. No me des tu diagnóstico. Yo te haré preguntas y tú responderás como el paciente."</em></p>
+            <p>El docente no evalúa un texto estático, sino que revisa la calidad de las preguntas clínicas que el estudiante le hizo a la máquina.</p>
+          </div>
+        `
+      },
+      prompting: {
+        etiqueta: "Metodología Paso 1",
+        titulo: "El Arte y Ciencia de la Consigna (Prompting)",
+        contenido: `
+          <p>Comunicarse efectivamente con un Modelo de Lenguaje requiere un alto grado de claridad estructural y conocimiento disciplinar. Un <em>Prompt</em> no es una búsqueda en Google; es la programación en lenguaje natural de un agente cognitivo.</p>
+          <h4>La Anatomía de un Prompt Académico Complejo</h4>
+          <p>Para obtener resultados que no sean superficiales (clichés), el estudiante debe dominar los componentes del Prompting Avanzado:</p>
+          <ul>
+            <li><strong>Rol:</strong> <em>"Asume el rol de un biólogo marino crítico del siglo XXI..."</em></li>
+            <li><strong>Tarea:</strong> <em>"Analiza el impacto del blanqueamiento de corales..."</em></li>
+            <li><strong>Contexto:</strong> <em>"El público son formuladores de políticas públicas que no saben de ciencia..."</em></li>
+            <li><strong>Restricciones (Clave):</strong> <em>"No uses viñetas. Cita al menos dos teorías contrastantes. Evita introducciones genéricas."</em></li>
+          </ul>
+          <p>Formular este nivel de instrucción requiere que el alumno <strong>ya sepa bastante sobre el tema</strong>. El prompt en sí mismo se convierte en evidencia de aprendizaje.</p>
+        `
+      },
+      friccion: {
+        etiqueta: "Metodología Paso 2",
+        titulo: "La Auditoría Algorítmica",
+        contenido: `
+          <p>El mayor riesgo de la IA es el sesgo de automatización (creerle a la máquina ciegamente). Para evitar esto, la Arquitectura Pedagógica introduce la "fricción".</p>
+          <h4>El Alumno como Editor Jefe</h4>
+          <p>La metodología exige que el estudiante trate el resultado de la IA como un "borrador de un pasante muy entusiasta pero inexperto y a veces mentiroso".</p>
+          <div class="caja-ejemplo">
+            <h5>Actividad: Marcado de Texto Crítico</h5>
+            <ol>
+              <li>El alumno genera un texto base con IA.</li>
+              <li>Lo exporta a un procesador de textos (Word/Docs).</li>
+              <li>Mediante comentarios al margen, debe realizar una <strong>Auditoría</strong>: marcar de verde lo que es correcto (justificando con fuentes), de amarillo las generalizaciones vagas (mejorándolas), y de rojo las "alucinaciones" o errores históricos/conceptuales.</li>
+            </ol>
+            <blockquote>El docente califica la calidad de la auditoría (el juicio crítico), no la redacción del texto base.</blockquote>
+          </div>
+        `
+      },
+      metacognicion: {
+        etiqueta: "Metodología Paso 3",
+        titulo: "La Reflexión Metacognitiva Integrada",
+        contenido: `
+          <p>La etapa final de cualquier proyecto académico asistido por IA debe ser la justificación del proceso. Aquí es donde el alumno demuestra que ha internalizado el conocimiento y no ha actuado como un simple puente entre la máquina y el profesor.</p>
+          <h4>El Anexo Metacognitivo (Obligatorio)</h4>
+          <p>Toda entrega formal debe ir acompañada de un breve documento reflexivo o historial de chat, donde el estudiante responda:</p>
+          <ul>
+            <li>¿Cuál fue el mayor desafío al intentar que la IA comprendiera tu enfoque?</li>
+            <li>¿En qué momento la IA generó una respuesta sesgada o incorrecta, y cómo te diste cuenta?</li>
+            <li>¿Qué parte conceptual del trabajo final es puramente tuya y no de la máquina?</li>
+          </ul>
+          <p>Esta práctica, sumada a <strong>micro-defensas orales</strong> en clase (preguntar al azar a los alumnos sobre su proceso), blinda la evaluación contra el plagio automatizado y asegura el aprendizaje genuino.</p>
+        `
+      },
+      alucinacion: {
+        etiqueta: "Alfabetización Práctica",
+        titulo: "Alucinaciones y la Falacia de la Autoridad",
+        contenido: `
+          <p>Las <strong>Alucinaciones</strong> ocurren cuando el LLM genera información absolutamente falsa, pero lo hace con una sintaxis, gramática y tono de seguridad perfectos. Dado que la máquina está entrenada para "complacer" y dar respuestas verosímiles, inventará datos antes que admitir ignorancia.</p>
+          <div class="caja-ejemplo">
+            <h5>Caso Real: Mata v. Avianca (Tribunales de EE.UU.)</h5>
+            <p>En 2023, abogados experimentados usaron ChatGPT para preparar un escrito judicial. Le pidieron a la IA que buscara casos previos de lesiones en aerolíneas.</p>
+            <p>ChatGPT <strong>inventó los casos</strong>. Inventó los nombres (ej. "Varghese v. China Southern Airlines"), las fechas, los números de archivo y hasta citas textuales de jueces inexistentes. Cuando los abogados le preguntaron al chat: <em>"¿Son reales estos casos?"</em>, la IA respondió: <em>"Sí, son reales y pueden encontrarse en las bases de datos legales"</em>.</p>
+          </div>
+          <h4>Conclusión Pedagógica</h4>
+          <p>La máquina carece de "ontología" (no sabe qué existe en el mundo físico y qué no; solo sabe qué palabras suelen ir juntas). Enseñar esto a los estudiantes es el primer pilar de la alfabetización digital moderna.</p>
+        `
+      }
+    };
+
+    /* --------------------------------------------------------------------------
+       LÓGICA DE INTERFAZ (UI) Y EVENTOS
+       -------------------------------------------------------------------------- */
+    document.addEventListener('DOMContentLoaded', () => {
+      
+      // 1. Menú Pegajoso y Cambio de Estilo al Scroll
+      const header = document.getElementById('navbar');
+      const navLinksArr = document.querySelectorAll('.nav-links a:not(.abrir-modal)');
+      const sections = document.querySelectorAll('section');
+
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          header.style.padding = '0.5rem 0';
+          header.style.boxShadow = 'var(--sombra-fuerte)';
+        } else {
+          header.style.padding = '1rem 0';
+          header.style.boxShadow = 'var(--sombra-suave)';
+        }
+
+        // Resaltar link del menú según la sección actual
+        let current = '';
+        sections.forEach(sec => {
+          if (scrollY >= (sec.offsetTop - 150)) {
+            current = sec.getAttribute('id');
+          }
+        });
+        navLinksArr.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === `#${current}`) {
+            link.classList.add('active');
+          }
+        });
+      });
+
+      // 2. Menú Móvil
+      const menuBtn = document.getElementById('menuBtn');
+      const navLinks = document.getElementById('navLinks');
+      
+      menuBtn.addEventListener('click', () => {
+        navLinks.classList.toggle('activo');
+      });
+
+      // Cerrar menú móvil al hacer click en un link
+      document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+          navLinks.classList.remove('activo');
+        });
+      });
+
+      // 3. Animaciones Scroll (Intersection Observer)
+      const reveals = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            obs.unobserve(entry.target); // Animar solo una vez
+          }
+        });
+      }, { threshold: 0.15 });
+      
+      reveals.forEach(el => observer.observe(el));
+
+      // 4. Lógica de Modales (Ventanas Emergentes)
+      const modal = document.getElementById('modalGlobal');
+      const btnCerrar = document.getElementById('btnCerrarModal');
+      const modEtiqueta = document.getElementById('modalEtiqueta');
+      const modTitulo = document.getElementById('modalTitulo');
+      const modCuerpo = document.getElementById('modalCuerpo');
+      
+      const botonesModal = document.querySelectorAll('.abrir-modal');
+
+      function abrirModal(id) {
+        const data = baseDatos[id];
+        if (!data) return;
+        
+        modEtiqueta.textContent = data.etiqueta;
+        modTitulo.textContent = data.titulo;
+        modCuerpo.innerHTML = data.contenido;
+        
+        modal.classList.add('activo');
+        document.body.style.overflow = 'hidden'; // Evita scrollear el fondo
+      }
+
+      function cerrarModal() {
+        modal.classList.remove('activo');
+        document.body.style.overflow = '';
+      }
+
+      botonesModal.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          abrirModal(btn.getAttribute('data-id'));
+        });
+      });
+
+      btnCerrar.addEventListener('click', cerrarModal);
+      
+      // Cerrar al clickear el fondo oscuro
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) cerrarModal();
+      });
+      
+      // Cerrar con tecla Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('activo')) {
+          cerrarModal();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
